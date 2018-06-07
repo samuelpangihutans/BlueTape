@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'https://bluetape.azurewebsites.net';
+$config['base_url'] = $_ENV['CI_BASE_URL'];
 
 /*
 |--------------------------------------------------------------------------
