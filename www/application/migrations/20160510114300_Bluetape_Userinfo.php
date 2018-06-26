@@ -29,7 +29,8 @@ class Migration_Bluetape_Userinfo extends CI_Migration {
             ),
             'answeredByEmail' => array(
                 'type' => 'VARCHAR',
-                'constraint' => '128'
+                'constraint' => '128',
+                'null' => TRUE
             )
         );
         $this->dbforge->modify_column('Transkrip', $modifyfields);
