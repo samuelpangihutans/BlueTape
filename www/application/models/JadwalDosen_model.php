@@ -38,9 +38,9 @@ class JadwalDosen_model extends CI_Model {
 
 
     public function getAllJadwal() {
-        $query = $this->db->query('SELECT "Jadwal_dosen".*, Bluetape_Userinfo.name
+        $query = $this->db->query('SELECT "Jadwal_dosen".*, "Bluetape_Userinfo".name
     			FROM "Jadwal_dosen"
-    			INNER JOIN Bluetape_Userinfo ON "Jadwal_dosen".user=Bluetape_Userinfo.email');
+    			INNER JOIN "Bluetape_Userinfo" ON "Jadwal_dosen".user="Bluetape_Userinfo".email');
         return $query->result();
     }
 

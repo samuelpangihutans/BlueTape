@@ -74,10 +74,10 @@ class Auth_model extends CI_Model {
             throw new Exception("Email $email tidak memiliki hak akses!");
         }
         $this->load->database();
-        $PKconfirmation = $this->db->get_where('Bluetape_Userinfo', array(
+        $query = $this->db->get_where('Bluetape_Userinfo', array(
             'email' => $email
         ));
-        if($PKconfirmation == null ){
+        if($query->row() === NULL){
             $this->db->insert('Bluetape_Userinfo', array(
                 'email' => $email,
                 'name' => $name,
