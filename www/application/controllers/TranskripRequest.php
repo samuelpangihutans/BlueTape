@@ -52,7 +52,8 @@ class TranskripRequest extends CI_Controller {
 
     public function add() {
         try {
-            if ($this->input->server('REQUEST_METHOD') == 'POST'){
+           #request methodnya dihilangkan
+           # if ($this->input->server('REQUEST_METHOD') == 'POST'){
                 date_default_timezone_set("Asia/Jakarta");
                 $userInfo = $this->Auth_model->getUserInfo();
                 $requests = $this->Transkrip_model->requestsBy($userInfo['email']);
@@ -64,12 +65,63 @@ class TranskripRequest extends CI_Controller {
                 if (in_array($requestType, $forbiddenTypes)) {
                     throw new Exception("Tidak bisa, karena transkrip $requestType sudah pernah dicetak di semester ini.");
                 }
+
+                #KODE ASLI : TERLALU SECURE KARNA DARI CI (digunakan ketika CSRF)
                 $this->db->insert('Transkrip', array(
-                    'requestByEmail' => $userInfo['email'],
-                    'requestDateTime' => strftime('%Y-%m-%d %H:%M:%S'),
-                    'requestType' => $requestType,
-                    'requestUsage' => htmlspecialchars($this->input->post('requestUsage'))
-                ));
+                     'requestByEmail' => $userInfo['email'],
+                     'requestDateTime' => strftime('%Y-%m-%d %H:%M:%S'),
+                     'requestType' => $requestType,
+                     'requestUsage' => htmlspecialchars($this->input->post('requestUsage'))
+                 ));
+                
+                 #--------------------------------------------------------------------------------------------------
+                
+                 /**
+                  * 1.SQL INJECTION  
+                  * Code Asli sudah Secure karena menggunakan framework CI , sehingga tidak bisa memanipulsai query
+                  * Menempelkan Query update pada Input Form : 
+                 */   
+
+                //  $con=mysqli_connect('localhost','root','','bluetape');
+
+                //  $requestByEmail = $userInfo['email'];
+                //  $requestDateTime = strftime('%Y-%m-%d %H:%M:%S');
+                //  $requestUsage= $this->input->post('requestUsage');
+
+
+                //  $query='INSERT INTO Transkrip (requestByEmail,requestDateTime,RequestType,RequestUsage) values("'.$requestByEmail.'","'.$requestDateTime.'","'.$requestType.'","'.$requestUsage.'")';
+                //  mysqli_multi_query($con,$query);
+
+                 #input pada Form "Keterangan" = ");UPDATE Transkrip SET answer="printed";
+             
+
+                 #--------------------------------------------------------------------------------------------------
+
+                 /** 
+                  * 2.SCRIPT INJECTION  : 
+                  * Code asli menggunakan html special Char : perlindungan terhadap script injection
+                  * Htmlspecialchars digunakan ketika anda akan menuliskan kode HTML pada file berekstensi HTML namun karakter-karakter special tetap ingin dipertahankan pada saat tampil dibrowser.
+                 */
+                
+                //  $this->db->insert('Transkrip', array(
+                //      'requestByEmail' => $userInfo['email'],
+                //      'requestDateTime' => strftime('%Y-%m-%d %H:%M:%S'),
+                //       'requestType' => $requestType,
+                //      'requestUsage' => $this->input->post('requestUsage')
+                //  ));
+
+                 #Input pada Form "keperluan" : <script>window.location.href="https://www.youtube.com/watch?time_continue=8&v=dQw4w9WgXcQ"</script>
+
+                
+                 #--------------------------------------------------------------------------------------------------
+
+                 /**
+                  * 3.CSRF : 
+                  * edit pada application/config/config.php ubah csrf proetction menjadi fals : -> UNTUK MEMBUAT CELAH
+                  * edit application/view/transkripRequest/main.php hapus  <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>" /> (baris 16 pada notepad++)
+                  */
+
+                 
                 $this->session->set_flashdata('info', 'Permintaan cetak transkrip sudah dikirim. Silahkan cek statusnya secara berkala di situs ini.');
 
                 $this->load->model('Email_model');
@@ -85,9 +137,9 @@ class TranskripRequest extends CI_Controller {
                         $this->Email_model->send_email($email, $subject, $message);
                     }
                 }
-            } else {
-                throw new Exception("Can't call method from GET request!");
-            }
+            #} else {
+                #throw new Exception("Can't call method from GET request!");
+           # }
         } catch (Exception $e) {
             $this->session->set_flashdata('error', $e->getMessage());
         }

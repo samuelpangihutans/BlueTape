@@ -23,7 +23,7 @@ $config['modules'] = array(
 
 $config['roles'] = array(
     'root' => array('rootbluetape@gmail.com'),
-    'tu.ftis' => array('gabriel.lazuardi@gmail.com'),
+    'tu.ftis' => array('rootbluetape@gmail.com'),
     'mahasiswa.ftis' => '(7[123]\\d{5})|(20[1-9][0-9]7[123][0-9]{4})@student\\.unpar\\.ac\\.id',
     'staf.unpar' => '.+@unpar\\.ac\\.id',
 	'dosen.informatika' => array ('gemini2911f665@gmail.com'),
